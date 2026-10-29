@@ -1,0 +1,108 @@
+<canvas
+  data-field-background
+  aria-hidden="true"
+  class="pointer-events-none fixed inset-0 -z-10"></canvas>
+
+<script>
+  const canvas = document.querySelector("[data-field-background]");
+
+  if (canvas instanceof HTMLCanvasElement) {
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const styles = getComputedStyle(document.documentElement);
+      const dot = styles.getPropertyValue("--field-dot").trim();
+      const hot = styles.getPropertyValue("--field-hot").trim();
+      let width = 0;
+      let height = 0;
+      let frame = 0;
+      const gap = 28;
+      const mouse = { x: -9999, y: -9999 };
+      const ripples = [];
+
+      const resize = () => {
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * pixelRatio;
+        canvas.height = height * pixelRatio;
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      };
+
+      const move = (event) => {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+      };
+
+      const leave = () => {
+        mouse.x = mouse.y = -9999;
+      };
+
+      const click = (event) => {
+        ripples.push({
+          x: event.clientX,
+          y: event.clientY,
+          time: performance.now(),
+        });
+      };
+
+      const draw = (now) => {
+        ctx.clearRect(0, 0, width, height);
+        const time = now / 1000;
+        for (let gridX = gap / 2; gridX < width; gridX += gap) {
+          for (let gridY = gap / 2; gridY < height; gridY += gap) {
+            const wave = reduce
+              ? 0
+              : Math.sin(gridX * 0.012 + time * 0.6) *
+                Math.cos(gridY * 0.014 - time * 0.4);
+            let x = gridX + wave * 3;
+            let y = gridY + wave * 3;
+            const dx = x - mouse.x;
+            const dy = y - mouse.y;
+            const distance = Math.hypot(dx, dy);
+            let heat = 0;
+
+            if (distance < 160) {
+              const force = (1 - distance / 160) ** 2;
+              x += (dx / (distance || 1)) * force * 22;
+              y += (dy / (distance || 1)) * force * 22;
+              heat = force;
+            }
+
+            for (const ripple of ripples) {
+              const radius = (now - ripple.time) * 0.5;
+              const rippleDistance = Math.hypot(
+                gridX - ripple.x,
+                gridY - ripple.y,
+              );
+              const band = 1 - Math.abs(rippleDistance - radius) / 40;
+              if (band > 0) heat = Math.max(heat, band * (1 - radius / 900));
+            }
+
+            ctx.fillStyle = heat > 0.05 ? hot : dot;
+            ctx.globalAlpha =
+              heat > 0.05 ? Math.min(1, 0.25 + heat) : 0.35 + wave * 0.15;
+            ctx.fillRect(x, y, 1.6 + heat * 1.6, 1.6 + heat * 1.6);
+          }
+        }
+
+        ctx.globalAlpha = 1;
+        while (ripples[0] && now - ripples[0].time > 1800) ripples.shift();
+        frame = requestAnimationFrame(draw);
+      };
+
+      resize();
+      frame = requestAnimationFrame(draw);
+      window.addEventListener("resize", resize);
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerdown", click);
+      document.addEventListener("pointerleave", leave);
+
+      window.addEventListener("pagehide", () => cancelAnimationFrame(frame), {
+        once: true,
+      });
+    }
+  }
+</script>

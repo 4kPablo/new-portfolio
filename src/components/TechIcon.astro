@@ -1,0 +1,53 @@
+---
+const slugs = {
+  React: "react",
+  JavaScript: "javascript",
+  Astro: "astro",
+  "Tailwind CSS": "tailwindcss",
+  "Git / GitHub": "github",
+  pnpm: "pnpm",
+  Vite: "vite",
+  Firebase: "firebase",
+  Firestore: "firebase",
+  Supabase: "supabase",
+  Cloudinary: "cloudinary",
+  Sanity: "sanity",
+  "Cloudflare Pages": "cloudflarepages",
+  Vercel: "vercel",
+  Codex: "openai",
+  v0: "v0",
+  Copilot: "githubcopilot",
+  Lovable: "lovable",
+  WordPress: "wordpress",
+  WooCommerce: "woocommerce",
+  "Mercado Pago": "mercadopago",
+  "shadcn/ui": "shadcnui",
+  "TanStack Start": "tanstack",
+  TanStack: "tanstack",
+  "Google login": "google",
+};
+
+const { name, size = 16, color = "a8acb8" } = Astro.props;
+const slug = name ? slugs[name] : undefined;
+---
+
+{
+  slug ? (
+    <img
+      src={`https://cdn.simpleicons.org/${slug}/${color}`}
+      alt=""
+      width={size}
+      height={size}
+      loading="lazy"
+      class="tech-icon inline-block shrink-0"
+    />
+  ) : null
+}
+
+<script>
+  document.querySelectorAll(".tech-icon").forEach((icon) => {
+    icon.addEventListener("error", () => {
+      icon.remove();
+    });
+  });
+</script>

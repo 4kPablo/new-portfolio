@@ -1,0 +1,215 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FieldBackground from "../components/FieldBackground.astro";
+import TechIcon from "../components/TechIcon.astro";
+import { projects, stack, certifications } from "../data/projects.js";
+---
+
+<Layout>
+  <div class="relative isolate min-h-screen">
+    <FieldBackground />
+    <div
+      class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--background)_85%)]"
+    >
+    </div>
+
+    <main
+      class="mx-auto max-w-3xl px-6 pb-24 font-mono text-sm leading-relaxed"
+    >
+      <header
+        class="flex items-center justify-between py-8 text-muted-foreground"
+      >
+        <span>~/pablo</span>
+        <nav class="flex gap-5" aria-label="Navegación principal">
+          <a class="hover:text-primary" href="#proyectos">proyectos</a>
+          <a class="hover:text-primary" href="#club">club</a>
+          <a class="hover:text-primary" href="#contacto">contacto</a>
+        </nav>
+      </header>
+
+      <section class="flex flex-col gap-8 pt-16 pb-24 sm:flex-row sm:items-end">
+        <img
+          src="/profile.png"
+          alt="Pablo Estigarribia"
+          class="h-28 w-28 rounded-full border border-border object-cover grayscale-[30%]"
+          width="128"
+          height="128"
+          fetchpriority="high"
+        />
+        <div>
+          <h1
+            class="font-serif text-5xl leading-none text-foreground sm:text-6xl"
+          >
+            Pablo <em class="text-primary">Estigarribia</em>
+          </h1>
+          <p class="mt-4 text-muted-foreground">
+            frontend dev · Buenos Aires · buscando mi primer trabajo junior
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-4 text-base text-foreground/85">
+        <p>
+          Hago webs con React, Astro y Tailwind. Casi todo lo que sé lo aprendí
+          construyendo cosas para gente concreta: una psicóloga que presenta sus
+          libros, una profe de historia que quería editar sus talleres sola, dos
+          tiendas que venden en ferias.
+        </p>
+        <p>
+          Me suele tocar la parte donde el sitio tiene que ser fácil de mantener
+          para quien no programa: paneles propios, catálogos que se actualizan
+          solos, integraciones con Firebase, Supabase o Cloudinary.
+        </p>
+      </section>
+
+      <section id="proyectos" class="pt-24">
+        <h2 class="mb-6 text-muted-foreground">// proyectos</h2>
+        <ol class="border-t border-border">
+          {
+            projects.map((project, index) => (
+              <li class="border-b border-border">
+                <details name="projects" open={index === 0}>
+                  <summary class="project-summary group flex w-full cursor-pointer items-baseline gap-4 py-4 text-left">
+                    <span class="text-muted-foreground">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span class="font-serif text-2xl text-foreground transition-colors group-hover:text-primary">
+                      {project.name}
+                    </span>
+                    <span class="ml-auto hidden text-xs text-muted-foreground sm:inline">
+                      {project.kind}
+                    </span>
+                    <span class="project-plus text-primary" aria-hidden="true">
+                      +
+                    </span>
+                    <span class="project-minus text-primary" aria-hidden="true">
+                      −
+                    </span>
+                  </summary>
+                  <div class="space-y-3 pb-6 pl-8">
+                    <p class="text-foreground/85">{project.summary}</p>
+                    {project.note && (
+                      <p class="text-muted-foreground italic">
+                        — {project.note}
+                      </p>
+                    )}
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                      {project.stack.map((technology) => (
+                        <span class="inline-flex items-center gap-1.5 text-accent-foreground">
+                          <TechIcon name={technology} size={12} />
+                          {technology}
+                        </span>
+                      ))}
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="ml-auto text-primary underline-offset-4 hover:underline"
+                      >
+                        ver sitio ↗
+                      </a>
+                    </div>
+                  </div>
+                </details>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section id="club" class="space-y-4 pt-24 text-foreground/85">
+        <h2 class="text-muted-foreground">// club de programadores, 2024</h2>
+        <p>
+          En el Centro Universitario de Vicente López (con Plataforma 5) nos
+          juntábamos a armar proyectos en equipo. Casi todos venían de backend,
+          así que terminé encargándome del frontend: del HUB del club y de
+          Historiarte con Ale.
+        </p>
+        <p>
+          También di una clase sobre login con Google usando Firebase, con
+          slides y un Notion con el código. Y por una sesión de fotos del
+          municipio terminé apareciendo en carteles de las carreras tecnológicas
+          — y en un reel donde se proyecta la página que diseñé.
+        </p>
+      </section>
+
+      <section class="pt-24">
+        <h2 class="mb-6 text-muted-foreground">// herramientas</h2>
+        <dl class="space-y-3">
+          {
+            Object.entries(stack).map(([category, technologies]) => (
+              <div class="grid gap-1 sm:grid-cols-[9rem_1fr]">
+                <dt class="text-primary">{category}</dt>
+                <dd class="flex flex-wrap gap-2">
+                  {technologies.map((technology) => (
+                    <span class="inline-flex items-center gap-2 rounded border border-border bg-card/60 px-2.5 py-1 text-foreground/85">
+                      <TechIcon name={technology} size={14} />
+                      {technology}
+                    </span>
+                  ))}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-6 text-muted-foreground">
+          Uso IA como herramienta, no como reemplazo: me sirve para prototipar
+          rápido, pero reviso y entiendo lo que queda en el código.
+        </p>
+      </section>
+
+      <section class="pt-24">
+        <h2 class="mb-6 text-muted-foreground">// certificaciones</h2>
+        <ul class="border-t border-border">
+          {
+            certifications.map((certification) => (
+              <li class="border-b border-border">
+                <a
+                  href={certification.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex items-baseline gap-4 py-3"
+                >
+                  <span class="text-muted-foreground transition-colors">
+                    {certification.year}
+                  </span>
+                  <span class="text-foreground transition-colors group-hover:text-primary">
+                    {certification.name}
+                  </span>
+                  <span class="ml-auto text-xs text-muted-foreground">
+                    {certification.org} ↗
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <footer id="contacto" class="mt-24 border-t border-border pt-8">
+        <p class="font-serif text-3xl text-foreground">¿Charlamos?</p>
+        <div class="mt-4 flex flex-wrap gap-6">
+          <a
+            class="text-primary hover:underline"
+            href="mailto:pablolestigarribia@gmail.com">E-mail ↗</a
+          >
+          <a
+            class="text-muted-foreground hover:text-primary"
+            href="https://github.com/4kPablo"
+            target="_blank"
+            rel="noopener noreferrer">github ↗</a
+          >
+          <a
+            class="text-muted-foreground hover:text-primary"
+            href="https://www.linkedin.com/in/pablo-estigarribia/"
+            target="_blank"
+            rel="noopener noreferrer">LinkedIn ↗</a
+          >
+        </div>
+        <p class="mt-10 text-xs text-muted-foreground">
+          tip: hacé click en el fondo!
+        </p>
+      </footer>
+    </main>
+  </div>
+</Layout>
